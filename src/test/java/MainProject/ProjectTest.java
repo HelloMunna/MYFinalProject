@@ -48,6 +48,7 @@ public class ProjectTest {
 
 	    @BeforeSuite
 	    public void htmlReport(){
+	    	//test
 	        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 	        Date date = new Date();
 	        String currentDate = dateFormat.format(date);
