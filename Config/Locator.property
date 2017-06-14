@@ -1,0 +1,7 @@
+EmailBox=.//*[@id='email_create']
+Message=.//*[@id='create_account_error']/ol/li
+CreateAccount=.//*[@id='noSlide']/h1
+LastName=.//*[@id='lastname']
+ProductName=.right-block>h5
+ProductPrice=.price-box
+Search=search_query_top
