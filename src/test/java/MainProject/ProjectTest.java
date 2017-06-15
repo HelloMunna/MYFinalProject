@@ -48,7 +48,6 @@ public class ProjectTest {
 
 	    @BeforeSuite
 	    public void htmlReport(){
-	    	//test
 	        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 	        Date date = new Date();
 	        String currentDate = dateFormat.format(date);
@@ -224,6 +223,10 @@ public class ProjectTest {
 	        driver.findElement(By.xpath(".//*[@id='layer_cart']/div[1]/div[2]/div[4]/a/span")).click();
 	    	
 	    	
+	    }
+	    @Test (priority = 5, enabled = true)
+	    public void hello(){
+	    	System.out.println("Hello");
 	    }
 	  
 		
