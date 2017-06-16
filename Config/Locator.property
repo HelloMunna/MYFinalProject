@@ -5,3 +5,14 @@ LastName=.//*[@id='lastname']
 ProductName=.right-block>h5
 ProductPrice=.price-box
 Search=search_query_top
+ACConfirmation=.//*[@id='center_column']/p[1]
+listProduct=.//*[@id='homefeatured']/li[1]
+productClick=.//*[@id='homefeatured']/li[1]/div/div[1]/div/a[2]
+quantity=.//*[@id='quantity_wanted']
+size=.//*[@id='group_1']
+submitButton=Submit
+checkOut=.//*[@id='layer_cart']/div[1]/div[2]/div[4]/a/span
+iFrame=fancybox-frame1497569631638
+price=.//*[@id='product_price_1_1_0']/span
+QtnText=.//*[@id='product_1_1_0_0']/td[5]/input[2]
+tatalValue=.//*[@id='total_product_price_1_1_0']

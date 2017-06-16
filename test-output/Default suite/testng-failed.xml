@@ -5,8 +5,9 @@
     <classes>
       <class name="MainProject.ProjectTest">
         <methods>
-          <include name="test"/>
           <include name="browserClose"/>
+          <include name="accountCreat"/>
+          <include name="productSearch"/>
           <include name="htmlReport"/>
           <include name="browser"/>
         </methods>

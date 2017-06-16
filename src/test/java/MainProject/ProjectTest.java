@@ -33,6 +33,7 @@ import FinalProject.LoginPage;
 import FinalProject.ProfilePage;
 import FinalProject.RegistrationPage;
 import Utility.DataReader;
+import Utility.ExcelReader;
 import Utility.screenShot;
 
 public class ProjectTest {
@@ -45,6 +46,7 @@ public class ProjectTest {
 	HomePage home;
 	LoginPage login;
 	ProfilePage profile;
+	ExcelReader excel;
 
 	    @BeforeSuite
 	    public void htmlReport(){
@@ -74,6 +76,7 @@ public class ProjectTest {
 			home = new HomePage(driver);
 			login = new LoginPage (driver);
 			profile = new ProfilePage (driver);
+			excel = new ExcelReader(DataReader.getTestData("ExcelPath"));
 			
 		}
 		
@@ -83,6 +86,7 @@ public class ProjectTest {
 				test = extent.createTest("Test1= Account Create");
 				home.ClicksignInButton();
 				login.enterNewEmailID("invalidEmail@Email");
+				//login.enterNewEmailID(excel.getData(0, 2, 4));
 				login.clickCreatAccountButton();
 				
 				String color = driver.findElement(By.xpath(DataReader.getLocator("EmailBox"))).getCssValue("background-color");
@@ -124,20 +128,20 @@ public class ProjectTest {
 	    	try {
 				test = extent.createTest("Test3= Create New Valid Account");
 				home.ClicksignInButton();
-				Random randomGenerator = new Random();
-				int randomInt = randomGenerator.nextInt(500);
+				Random randomGenerator = new Random(); 
+				int randomInt = randomGenerator.nextInt(700);
 				login.enterNewEmailID("munna" +randomInt+ "@gmail.com");
 				login.clickCreatAccountButton();
 				String createAccountPage = driver.findElement(By.xpath(DataReader.getLocator("CreateAccount"))).getText();
 				System.out.println(createAccountPage);
-				Assert.assertTrue(createAccountPage.contains("CREATE AN ACCOUNT"), "Not Displayed.");
+				Assert.assertTrue(createAccountPage.contains("AUTHENTICATION"), "A/C Creation Page Not Displayed.");
 				
 				reg.titleMR();
-				String firstName = RandomStringUtils.randomAlphabetic(8);
-				reg.typeFirstName(firstName);
-				String lastName = RandomStringUtils.random(8);
+				String firstName = RandomStringUtils.randomAlphabetic(10);
+				reg.typeFirstName(firstName.toUpperCase());
+				String lastName = RandomStringUtils.randomAlphabetic(8);
 				reg.typeLastName(lastName);
-				reg.typePassWord("12345");
+				reg.typePassWord("1234567");
 				Select day = new Select (reg.selectDay());
 				day.selectByIndex(12);
 				Select month = new Select (reg.selectMonth());
@@ -146,18 +150,20 @@ public class ProjectTest {
 				year.selectByValue("1990");
 				reg.ClickRegisterButton();
 				
-				//String accountConfirmation = driver.findElement(By.xpath(".//*[@id='center_column']/p[1]")).getText().trim();
-				//Assert.assertTrue(accountConfirmation.contains("Your account has been created."), "Account Created Message Displayed");
+				String accountConfirmation = driver.findElement(By.xpath(DataReader.getLocator("ACConfirmation"))).getText().trim();
+				System.out.println(accountConfirmation);
+				Assert.assertTrue(accountConfirmation.contains("Your account has been created."), "Message Not Displayed");
 				
 				profile.clickPersonalInfo();
 				WebElement lastNameInput = driver.findElement(By.xpath(DataReader.getLocator("LastName")));
 				lastNameInput.clear();
-				lastNameInput.sendKeys("Munna");
-				reg.typePassWord("12345");
+				lastNameInput.sendKeys("MUNNA");
+				reg.typeOldPassword("1234567");
 				profile.clickSave();
 				
-				//String nameValidation = driver.findElement(By.cssSelector(".account")).getText();
-				//Assert.assertTrue(nameValidation.contains(firstName +lastName), "Name Did Not Match");
+				String nameValidation = driver.findElement(By.cssSelector(".account")).getText().toUpperCase();
+				Assert.assertTrue(nameValidation.contains(firstName.toUpperCase()+" "+"MUNNA"), "Name Did Not Match");
+	            test.log(Status.PASS, "Validation Completed");
 				
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
@@ -166,7 +172,7 @@ public class ProjectTest {
 	 		
 	 }
 	   
-	    @Test (priority = 3, enabled = false)
+	    @Test (priority = 3, enabled = true)
 		public void productSearch() throws Exception{
 		    try {
 				test = extent.createTest("Test4= Product Search");
@@ -182,7 +188,7 @@ public class ProjectTest {
 				for (WebElement element : allElements){
 					String product = element.getText().trim().toUpperCase();
 					Assert.assertTrue(product.contains("SHIRT"));
-					test.log(Status.PASS, "All Products have SHIRT Keyword.");
+					
 				}
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
@@ -198,44 +204,56 @@ public class ProjectTest {
 				String value = allPrices.get(i).getText().replace("$", "");
 				double price = Double.parseDouble(value);
 				Assert.assertTrue(price<=50.00, "One of the Products cost more than $50");
+				test.log(Status.PASS, "All Products have SHIRT Keyword and Top Seller Products Cost less than $50");
 			}
 			
 		} 
 		    
 	}
-	    @Test (priority = 4, enabled = false)
-	    public void addCart(){
-	    	WebElement element = driver.findElement(By.xpath(".//*[@id='homefeatured']/li[1]"));
-	    	WebDriverWait wait = new WebDriverWait(driver, 30);
-	        wait.until(ExpectedConditions.visibilityOf(element));
-	        Actions action = new Actions (driver);
-	        action.moveToElement(element).build().perform();
-	        driver.findElement(By.xpath(".//*[@id='homefeatured']/li[1]/div/div[1]/div/a[2]")).click();
-	        
-	        //WebDriverWait wait2 = new WebDriverWait(driver, 60);
-	        //wait2.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(By.id("fancybox-frame1497081697296")));
-	  
-	        driver.switchTo().frame(0);
-	        driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
-	        Select size = new Select (driver.findElement(By.xpath(".//*[@id='group_1']")));
-	        size.selectByIndex(2);
-	        driver.findElement(By.name("Submit")).click();
-	        driver.findElement(By.xpath(".//*[@id='layer_cart']/div[1]/div[2]/div[4]/a/span")).click();
+	    @Test (priority = 4, enabled = true)
+	    public void addCart() throws Exception{
+	    	try {
+				WebElement element = driver.findElement(By.xpath(DataReader.getLocator("listProduct")));
+				WebDriverWait wait = new WebDriverWait(driver, 30);
+				wait.until(ExpectedConditions.visibilityOf(element));
+				Actions action = new Actions (driver);
+				action.moveToElement(element).build().perform();
+				driver.findElement(By.xpath(DataReader.getLocator("productClick"))).click();
+				
+				driver.switchTo().frame(driver.findElement(By.id(DataReader.getLocator("iFrame"))));
+				WebElement quantity = driver.findElement(By.xpath(DataReader.getLocator("quantity")));
+				quantity.clear();
+				quantity.sendKeys("2");
+				
+				Select size = new Select (driver.findElement(By.xpath(DataReader.getLocator("size"))));
+				size.selectByIndex(2);
+				driver.findElement(By.name(DataReader.getLocator("submitButton"))).click();
+				
+				driver.switchTo().defaultContent();
+				driver.findElement(By.xpath(DataReader.getLocator("checkOut"))).click();
+				
+				String Price = driver.findElement(By.xpath(DataReader.getLocator("price"))).getText().replace("$", "");
+				double unitPrice = Double.parseDouble(Price);
+				String QTN = driver.findElement(By.xpath(DataReader.getLocator("QtnText"))).getText();
+				double productQTN = Double.parseDouble(QTN);
+				String totalValue = driver.findElement(By.xpath(DataReader.getLocator("totalValue"))).getText().replace("$", "");
+				double total = Double.parseDouble(totalValue);
+				
+				Assert.assertTrue(unitPrice*productQTN==total, "Calculation Error, Test Failed");  
+				test.log(Status.PASS, "Test Passed");
+				
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
 	    	
-	    	
-	    }
-	    @Test (priority = 5, enabled = true)
-	    public void hello(){
-	    	System.out.println("Hello");
-	    }
-	  
-		
+	     }
+	    
 		@AfterMethod
 		public void browserClose(ITestResult result){
 		   if (ITestResult.FAILURE==result.getStatus()){
 			   screenShot.captureScreenShot(driver, result.getName());
 		   }
-		   driver.close();
+		   driver.quit();
 		   extent.flush();
 		}
 

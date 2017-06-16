@@ -14,6 +14,7 @@ WebDriver driver;
 	By lastName = By.xpath(".//*[@id='customer_lastname']");
 	By email = By.name("email");
 	By creatPassWord = By.xpath(".//*[@id='passwd']");
+	By oldPassword = By.xpath(".//*[@id='old_passwd']");
 	By selectDay = By.id("days");
 	By selectMonth = By.name("months");
 	By selectYear = By.xpath(".//*[@id='years']");
@@ -46,6 +47,10 @@ WebDriver driver;
 	
 	public void typePassWord(String PassWord){
 		driver.findElement(creatPassWord).sendKeys(PassWord);
+	}
+	
+	public void typeOldPassword(String oldPass){
+		driver.findElement(oldPassword).sendKeys(oldPass);
 	}
 	
 	public WebElement selectDay(){
